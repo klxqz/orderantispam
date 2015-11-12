@@ -1,0 +1,80 @@
+<style type="text/css">
+    .plugin-menu{
+        float: right;
+        list-style: none;
+    }
+    .plugin-menu li{
+        float: left;
+        margin-left: 10px;
+    }
+    .plugin-menu li a{
+        text-decoration: underline;
+    }
+</style>
+<h1>Анти-спам заказов</h1>
+
+<ul class="plugin-menu">
+    <li><a href="mailto:support@wa-plugins.ru">Поддержка разработчика плагина</a></li>
+    <li><a target="_blank" href="http://wa-plugins.ru/">WA-PLUGINS.ru - сайт разработчика</a></li>
+</ul>
+
+
+<div class="fields form">
+    <form action="?module=plugins&id=orderantispam&action=save" method="post" id="plugins-settings-form">
+        {$wa->csrf()}
+
+        <div class="field-group">
+            <div class="field">
+                <div class="name">
+                    Статус плагина
+                </div>
+                <div class="value no-shift s-ibutton-checkbox">
+                    <input type="hidden" name="shop_orderantispam[status]" value="0">
+                    <input type="checkbox" id="ibutton-status" name="shop_orderantispam[status]" value="1"{if $settings.status} checked{/if}>
+                </div>
+            </div>
+        </div>
+
+        <div class="field-group"{if !$settings.status} style="display:none"{/if}>
+            <div class="field">
+                <div class="name">
+                    Действие
+                </div>
+                <div class="value">
+                    <select name="shop_orderantispam[action_id]">
+                        <option></option>
+                        {foreach $actions as $id => $action}
+                            <option{if $settings.action_id|default:'' == $id} selected="selected"{/if} value="{$id}">{$action.name}</option>
+                        {/foreach}
+                    </select>
+                    <p class="hint">Укажите действие, которое будет выполнено для спам-заказов</p>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="field"{if !$settings.status} style="display:none"{/if}>
+            <div class="value submit">
+                <input type="submit" class="button green" value="Сохранить">
+                <span id="plugins-settings-form-status" style="display:none">
+                    <i style="vertical-align:middle" class="icon16 yes"></i> [`Saved`]
+                </span>
+            </div>
+        </div>
+    </form>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $('#ibutton-status').iButton({ldelim}labelOn: "", labelOff: "", className: 'mini'{rdelim}).change(function () {
+                    var self = $(this);
+                    var enabled = self.is(':checked');
+                    if (enabled) {
+                        self.closest('.field-group').siblings().show(200);
+                    } else {
+                        self.closest('.field-group').siblings().hide(200);
+                    }
+                    var f = $("#plugins-settings-form");
+                    $.post(f.attr('action'), f.serialize());
+                });
+            });
+</script>

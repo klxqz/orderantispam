@@ -1,0 +1,37 @@
+<style>
+    .wf-action.button[data-action-id="{$action_id}"]{
+        display: none;
+    } 
+</style>
+<a id="order-anti-spam-button" class="button red" href="#">Спамер<i class="icon16 delete"></i></a>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#order-anti-spam-button').click(function () {
+            var self = $(this);
+            $(this).after('<i class="icon16 loading"></i>');
+            $.ajax({
+                url: '?plugin=orderantispam&action=spamerOrder',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    order_id: {$order.id}
+                },
+                success: function (data, textStatus) {
+                    self.next('i.icon16.loading').remove();
+                    if (data.status == 'ok') {
+                        self.after(data.data.script).show();
+                        self.hide();
+                    } else {
+                        alert(data.errors.join(', '));
+                    }
+                },
+                error: function (response) {
+                    self.next('i.icon16.loading').remove();
+                    alert(response.responseText);
+                }
+            });
+            return false;
+        });
+    });
+</script>
